@@ -178,7 +178,7 @@
         
         <!-- Header -->
         <header class="text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-700">
                 Java Study Hub
             </h1>
             <p id="subtitle" class="text-slate-400 mt-2">Click the card to reveal the definition.</p>
@@ -186,14 +186,26 @@
 
         <!-- Mode Switcher -->
         <div class="p-1.5 rounded-xl bg-slate-800 flex items-center gap-2">
-            <button id="flashcard-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-500 text-white transition-colors">Flashcards</button>
+            <button id="flashcard-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-700 text-white transition-colors">Flashcards</button>
             <button id="quiz-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:bg-slate-700/50 transition-colors">Quiz</button>
+            <button id="matching-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:bg-slate-700/50 transition-colors">Matching (Coming Soon)</button>
         </div>
 
+        <!-- Matching View -->
+        <div id="matching-view" class="w-full hidden">
+            <div class="flex justify-between items-center mb-4 p-4 bg-slate-800 rounded-lg">
+                <p class="text-lg font-semibold">Turns: <span id="match-turns">0</span></p>
+                <button id="restart-match-btn" class="text-sm font-semibold py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors">Restart</button>
+                <p class="text-lg font-semibold">Time: <span id="match-timer">00:00</span></p>
+            </div>
+            
+            <div id="match-grid" class="grid grid-cols-4 gap-4">
+                </div>
+        </div>
         <!-- Flashcard View -->
         <div id="flashcard-view" class="w-full">
             <!-- Card Component -->
-            <div id="card-container" class="card-container w-full h-80 md:h-96 cursor-pointer">
+            <div id="card-container" class="card-container w-full h-80 md:h-96 cursor-pointer" role="button" tabindex="0" aria-label="Flashcard. Click to flip.">
                 <div id="card-inner" class="card-inner">
                     <!-- Front of Card -->
                     <div class="card-front">
@@ -208,31 +220,32 @@
 
             <!-- Mastery Tracker -->
             <div id="mastery-tracker" class="w-full mt-4 flex flex-col items-center gap-3">
-                <div class="w-full bg-slate-700 rounded-full h-2.5">
-                    <div id="mastery-progress-bar" class="bg-gradient-to-r from-green-400 to-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-                <div class="flex items-center justify-between w-full">
-                     <p id="mastery-count" class="text-sm font-medium text-slate-400">0/15 Mastered</p>
-                     <button id="mastery-btn" class="flex items-center gap-2 text-sm font-semibold py-2 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors">
-                        <svg id="mastery-icon-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20 6 9 17l-5-5"/></svg>
-                        <svg id="mastery-icon-star" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        <span id="mastery-btn-text">Mark as Mastered</span>
-                    </button>
-                </div>
+            <div class="w-full bg-slate-700 rounded-full h-2.5">
+                <div id="mastery-progress-bar" class="bg-gradient-to-r from-sky-400 to-blue-700 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
             </div>
-
-            <!-- Flashcard Navigation -->
-            <div class="w-full flex items-center justify-between mt-2">
-                <button id="prev-btn" class="p-4 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="m15 18-6-6 6-6"/></svg>
-                </button>
-                <p id="progress-indicator" class="text-lg font-semibold text-slate-400"></p>
-                <button id="next-btn" class="p-4 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center gap-4">
+                    <p id="mastery-count" class="text-sm font-medium text-slate-400">0/40 Mastered</p>
+                    <button id="reset-btn" class="text-xs font-medium text-slate-500 hover:text-red-400 transition-colors">Reset Progress</button>
+                </div>
+                <button id="mastery-btn" class="flex items-center gap-2 text-sm font-semibold py-2 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors">
+                    <svg id="mastery-icon-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20 6 9 17l-5-5"/></svg>
+                    <svg id="mastery-icon-star" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span id="mastery-btn-text">Mark as Mastered</span>
                 </button>
             </div>
         </div>
-        
+
+        <div class="w-full flex items-center justify-between mt-2">
+            <button id="prev-btn" class="p-4 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <p id="progress-indicator" class="text-lg font-semibold text-slate-400"></p>
+            <button id="next-btn" class="p-4 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+        </div>
         <!-- Quiz View -->
         <div id="quiz-view" class="w-full hidden">
             <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-2xl shadow-purple-500/10">
@@ -294,8 +307,7 @@
                 { term: "Inheritance", definition: "A mechanism where a new class derives properties and behaviors from an existing class.", mastered: false },
                 { term: "Polymorphism", definition: "The ability of an object to take on many forms, often through method overriding.", mastered: false },
                 { term: "Abstraction", definition: "Hiding complex implementation details and showing only essential features of an object.", mastered: false },
-                { term: "Interface", definition: "A completely 'abstract class' that is used to group related methods with empty bodies.", mastered: false },
-                { term: "Constructor", definition: "A special method used to initialize objects. It is called when an object of a class is created.", mastered: false },
+                { term: "Interface", definition: "An abstract type used to specify a behavior that classes must implement. Since Java 8, they can contain default and static methods.", mastered: false },                { term: "Constructor", definition: "A special method used to initialize objects. It is called when an object of a class is created.", mastered: false },
                 { term: "Exception", definition: "An event that occurs during the execution of a program that disrupts the normal flow of instructions.", mastered: false },
                 { term: "ArrayList", definition: "A resizable array, which can be found in the java.util package.", mastered: false },
                 { term: "Static", definition: "A keyword that indicates a member variable or method can be accessed without requiring an instantiation of the class.", mastered: false },
@@ -313,10 +325,6 @@
                 { term: "JIT Compiler", definition: "Just-In-Time Compiler. A component of the JVM that improves performance by compiling bytecode into native machine code at runtime.", mastered: false },
                 { term: "Immutable Object", definition: "An object whose state cannot be modified after it is created. Examples include String and wrapper classes like Integer.", mastered: false },
                 { term: "Wrapper Classes", definition: "Classes that provide a way to use primitive data types (int, boolean, etc.) as objects. Examples include Integer, Boolean, and Double.", mastered: false },
-                { term: "JavaFX", definition: "A software platform for creating and delivering desktop applications, as well as rich internet applications (RIAs) that can run across a wide variety of devices.", mastered: false },
-                { term: "Maven", definition: "A build automation tool used primarily for Java projects. It helps manage project dependencies and build lifecycle.", mastered: false },
-                { term: "Gradle", definition: "A build automation tool that is flexible and allows for custom build logic. It combines the best features of Ant and Maven.", mastered: false },
-                { term: "Dependency Injection", definition: "A design pattern used to implement IoC (Inversion of Control), allowing the creation of dependent objects outside of a class and providing those objects to a class in various ways.", mastered: false },
                 { term: "Reflection", definition: "A feature that allows inspection and modification of classes, methods, and fields at runtime.", mastered: false },
                 { term: "Java Memory Model", definition: "A specification that describes how threads in a Java program interact through memory and what behaviors are allowed in concurrent execution.", mastered: false },
                 { term: "Volatile Keyword", definition: "A keyword used in multithreading to indicate that a variable's value may be changed by different threads, ensuring visibility of changes across threads.", mastered: false },
@@ -324,31 +332,10 @@
                 { term: "Transient Keyword", definition: "A keyword used to indicate that a field should not be serialized.", mastered: false },
                 { term: "Native Method", definition: "A method that is implemented in a language other than Java, typically in C or C++, and is called from Java code using the Java Native Interface (JNI).", mastered: false },
                 { term: "JavaBeans", definition: "Reusable software components for Java that can be manipulated visually in a builder tool. They follow specific conventions, including having a no-argument constructor and getter/setter methods.", mastered: false },
-                { term: "Thread Pool", definition: "A collection of pre-instantiated reusable threads that can be used to execute tasks concurrently, improving performance by reducing the overhead of thread creation.", mastered: false },
-                { term: "Deadlock", definition: "A situation in multithreading where two or more threads are blocked forever, each waiting for the other to release a resource.", mastered: false },
-                { term: "Java Naming and Directory Interface (JNDI)", definition: "An API that provides naming and directory functionality to Java applications, allowing them to look up objects such as databases and EJBs in a directory service.", mastered: false },
-                { term: "Java Management Extensions (JMX)", definition: "A technology that provides tools for managing and monitoring applications, system objects, devices, and service-oriented networks.", mastered: false },
-                { term: "Java Native Interface (JNI)", definition: "A framework that allows Java code running in the JVM to call and be called by native applications and libraries written in other languages like C or C++.", mastered: false },
-                { term: "Java Platform Module System (JPMS)", definition: "A system introduced in Java 9 that allows developers to modularize their applications, improving maintainability and security by defining explicit dependencies between modules.", mastered: false },
                 { term: "Functional Interface", definition: "An interface that contains exactly one abstract method, making it suitable for use with lambda expressions and method references.", mastered: false },
                 { term: "Optional Class", definition: "A container object which may or may not contain a non-null value. It is used to represent optional values and avoid null pointer exceptions.", mastered: false },
                 { term: "Record Class", definition: "A special type of class introduced in Java 14 that is used to model immutable data. Records automatically generate boilerplate code like constructors, getters, equals(), hashCode(), and toString() methods.", mastered: false },
                 { term: "Switch Expression", definition: "An enhanced version of the traditional switch statement introduced in Java 12, allowing it to be used as an expression that returns a value.", mastered: false },
-                { term: "Text Blocks", definition: "A feature introduced in Java 13 that allows for multi-line string literals, improving readability and reducing the need for escape sequences.", mastered: false },
-                { term: "Sealed Classes", definition: "A feature introduced in Java 15 that allows developers to restrict which classes can extend or implement a particular class or interface, enhancing control over the class hierarchy.", mastered: false },
-                { term: "Pattern Matching for instanceof", definition: "A feature introduced in Java 16 that simplifies the common practice of casting an object after checking its type with the instanceof operator.", mastered: false },
-                { term: "Foreign Function & Memory API", definition: "An incubating feature that provides a way for Java programs to interoperate with code and data outside of the JVM, such as native libraries and memory segments.", mastered: false },
-                { term: "Project Loom", definition: "An ongoing project aimed at introducing lightweight, user-mode threads (fibers) to the Java platform, improving concurrency and scalability.", mastered: false },
-                { term: "Project Valhalla", definition: "An ongoing project focused on introducing value types to the Java language, allowing for more efficient memory usage and performance by enabling the creation of lightweight, immutable data structures.", mastered: false },
-                { term: "Project Panama", definition: "An ongoing project aimed at improving the interoperability between Java and native code, making it easier to call native libraries and work with native data structures.", mastered: false },
-                { term: "Project Amber", definition: "An ongoing project focused on exploring and incubating smaller, productivity-oriented language features to improve developer experience and code readability.", mastered: false },
-                { term: "Project Metropolis", definition: "An initiative to enhance the Java platform for building modern, cloud-native applications, focusing on performance, scalability, and ease of use.", mastered: false },
-                { term: "Project Skara", definition: "An initiative to modernize the OpenJDK project infrastructure, improving collaboration and contribution processes for the Java community.", mastered: false },
-                { term: "Project Lilliput", definition: "An experimental project exploring the possibility of reducing the memory footprint of Java applications by introducing more compact data representations and memory layouts.", mastered: false },
-                { term: "Project Leyden", definition: "An initiative to improve the startup time and memory footprint of Java applications, particularly for cloud and serverless environments.", mastered: false },
-                { term: "Project ZGC", definition: "A scalable, low-latency garbage collector designed to handle large heaps with minimal pause times, making it suitable for applications requiring high throughput and responsiveness.", mastered: false },
-                { term: "Project Shenandoah", definition: "A low-pause-time garbage collector that aims to reduce GC pause times by performing more work concurrently with the application threads.", mastered: false },
-                { term: "Project Loom", definition: "An ongoing project aimed at introducing lightweight, user-mode threads (fibers) to the Java platform, improving concurrency and scalability.", mastered: false }
             ];
 
             const quizQuestions = [
@@ -358,7 +345,6 @@
                 { question: "Which collection class does not allow duplicate elements?", code: null, options: ["ArrayList", "HashMap", "HashSet", "LinkedList"], answer: "HashSet" },
                 { question: "What concept is demonstrated by having two methods with the same name but different parameters?", code: `public int add(int a, int b) { ... }\npublic double add(double a, double b) { ... }`, options: ["Overriding", "Inheritance", "Overloading", "Encapsulation"], answer: "Overloading" },
                 { question: "Which keyword is used to create an instance of a class?", code: null, options: ["new", "create", "instance", "object"], answer: "new" },
-                { question: "An interface can contain:", code: null, options: ["Concrete methods", "Constructors", "Abstract methods only", "Instance variables"], answer: "Abstract methods only" },
                 { question: "What is the correct way to declare a constant in Java?", code: null, options: ["const int x = 5;", "int final x = 5;", "final int x = 5;", "static const x = 5;"], answer: "final int x = 5;" },
                 { question: "What does the JVM do?", code: null, 
                 options: [
@@ -372,6 +358,11 @@
                 code: null, 
                 options: ["Encapsulation", "Abstraction", "Polymorphism", "Inheritance"], 
                 answer: "Abstraction" 
+                },
+                { question: "Which of the following can a Java interface NOT contain?", 
+                code: null, 
+                options: ["Default methods", "Static methods", "Constructors", "Abstract methods"], 
+                answer: "Constructors" 
                 },
                 { question: "What will be the output?", 
                 code: `int a = 10;\nint b = 20;\nSystem.out.println(a++ + ++b);`, 
@@ -393,6 +384,13 @@
             let quizStreak = 0;
             let answerSelected = false;
             let buddyMessageTimeout;
+            // New state for matching game
+            let firstCard, secondCard;
+            let lockBoard = false;
+            let matchedPairs = 0;
+            let matchTurns = 0;
+            let matchTimerInterval;
+            let matchSeconds = 0;
 
             // --- DOM ELEMENTS ---
             const subtitle = document.getElementById('subtitle');
@@ -425,7 +423,11 @@
             const quizFeedbackEl = document.getElementById('quiz-feedback');
             const restartQuizBtn = document.getElementById('restart-quiz-btn');
             const streakCountEl = document.getElementById('streak-count');
-            
+            // New elements for matching game
+            const matchingView = document.getElementById('matching-view');
+            const matchTurnsEl = document.getElementById('match-turns');
+            const matchTimerEl = document.getElementById('match-timer');
+            const restartMatchBtn = document.getElementById('restart-match-btn');
             // Study Buddy elements
             const studyBuddy = document.getElementById('study-buddy');
             const speechBubble = document.getElementById('speech-bubble');
@@ -450,6 +452,15 @@
                 }, duration);
             }
             
+            // --- SHUFFLE FUNCTION ---
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];    
+                }
+                return array;
+            }
+
             // --- MODE SWITCHING LOGIC ---
             function switchMode(mode) {
                 if (currentMode === mode) return;
@@ -464,7 +475,7 @@
                     subtitle.textContent = "Click the card to reveal the definition.";
                     initFlashcards();
                     showBuddyMessage("Let's review some cards!");
-                } else {
+                } else if (mode === 'quiz') {
                     flashcardView.classList.add('hidden');
                     quizView.classList.remove('hidden');
                     quizModeBtn.classList.add('bg-blue-500', 'text-white');
@@ -474,11 +485,117 @@
                     subtitle.textContent = "Test your knowledge with code examples.";
                     initQuiz();
                     showBuddyMessage("Quiz time! Good luck!");
-                }
+                } else if (mode === 'matching') {
+                    // Future implementation for matching mode
+                    matchingView.classList.remove('hidden');
+                    matchingModeBtn.classList.add('bg-blue-700', 'text-white');
+                    subtitle.textContent = "Find the matching pairs.";
+                    initMatchingGame();                }
+            }
+            // --- MATCHING LOGIC ---
+            function initMatchingGame() {
+                const grid = document.getElementById('match-grid');
+                grid.innerHTML = '';
+                
+                // Reset game state
+                matchTurns = 0;
+                matchedPairs = 0;
+                matchSeconds = 0;
+                matchTurnsEl.textContent = 0;
+                resetBoard();
+                startMatchTimer();
+
+                const gameCardsData = [...flashcards].sort(() => 0.5 - Math.random()).slice(0, 8);
+                const gamePairs = [];
+                gameCardsData.forEach(card => {
+                    gamePairs.push({ content: card.term, key: card.term });
+                    gamePairs.push({ content: card.definition, key: card.term });
+                });
+                shuffleArray(gamePairs);
+
+                gamePairs.forEach(pair => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'card-container h-28 cursor-pointer'; // Smaller card
+                    cardElement.dataset.key = pair.key;
+
+                    cardElement.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front bg-slate-700 border border-slate-600"></div>
+                            <div class="card-back !text-xs !p-2 !leading-tight !text-left overflow-y-auto definition-scroll">
+                                ${pair.content}
+                            </div>
+                        </div>
+                    `;
+                    cardElement.addEventListener('click', handleMatchCardClick);
+                    grid.appendChild(cardElement);
+                });
             }
 
+            function handleMatchCardClick() {
+                if (lockBoard) return;
+                if (this === firstCard) return;
+
+                this.classList.add('flipped');
+
+                if (!firstCard) {
+                    firstCard = this;
+                    return;
+                }
+
+                secondCard = this;
+                lockBoard = true;
+                matchTurns++;
+                matchTurnsEl.textContent = matchTurns;
+
+                checkForMatch();
+            }
+
+            function checkForMatch() {
+                const isMatch = firstCard.dataset.key === secondCard.dataset.key;
+                isMatch ? disableCards() : unflipCards();
+            }
+
+            function disableCards() {
+                firstCard.removeEventListener('click', handleMatchCardClick);
+                secondCard.removeEventListener('click', handleMatchCardClick);
+                matchedPairs++;
+                
+                if (matchedPairs === 8) { // Game over condition
+                    stopMatchTimer();
+                    showBuddyMessage(`You did it in ${matchTurns} turns!`, 'success');
+                }
+                resetBoard();
+            }
+
+            function unflipCards() {
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    resetBoard();
+                }, 1200);
+            }
+
+            function resetBoard() {
+                [firstCard, secondCard] = [null, null];
+                lockBoard = false;
+            }
+
+            function startMatchTimer() {
+                stopMatchTimer(); // Clear any existing timer
+                matchTimerInterval = setInterval(() => {
+                    matchSeconds++;
+                    const minutes = String(Math.floor(matchSeconds / 60)).padStart(2, '0');
+                    const seconds = String(matchSeconds % 60).padStart(2, '0');
+                    matchTimerEl.textContent = `${minutes}:${seconds}`;
+                }, 1000);
+            }
+
+            function stopMatchTimer() {
+                clearInterval(matchTimerInterval);
+            }
             // --- FLASHCARD LOGIC ---
             function initFlashcards() {
+                shuffleArray(flashcards);
                 currentFlashcardIndex = 0;
                 updateFlashcard();
                 updateMasteryProgress();
@@ -503,18 +620,19 @@
                 }
                 updateMasteryButton();
                 updateMasteryProgress();
+                saveProgress();
             }
 
             function updateMasteryButton() {
                 const card = flashcards[currentFlashcardIndex];
                 if (card.mastered) {
                     masteryBtnText.textContent = "Mastered!";
-                    masteryBtn.classList.add('text-green-400');
+                    masteryBtn.classList.add('text-pink-400');
                     masteryIconCheck.classList.add('hidden');
                     masteryIconStar.classList.remove('hidden');
                 } else {
                     masteryBtnText.textContent = "Mark as Mastered";
-                    masteryBtn.classList.remove('text-green-400');
+                    masteryBtn.classList.remove('text-pink-400');
                     masteryIconCheck.classList.remove('hidden');
                     masteryIconStar.classList.add('hidden');
                 }
@@ -536,6 +654,7 @@
 
             // --- QUIZ LOGIC ---
             function initQuiz() {
+                shuffleArray(quizQuestions);
                 currentQuizIndex = 0;
                 quizScore = 0;
                 quizStreak = 0;
@@ -574,6 +693,29 @@
                 updateQuizProgress();
             }
 
+            // --- PROGRESS PERSISTENCE ---
+            function saveProgress() {
+                const masteryStatus = {};
+                flashcards.forEach(card => {
+                    if (card.mastered) {
+                        masteryStatus[card.term] = true;
+                    }
+                });
+                localStorage.setItem('javaStudyHubMastery', JSON.stringify(masteryStatus));
+            }
+
+            function loadProgress() {
+                const savedMastery = JSON.parse(localStorage.getItem('javaStudyHubMastery'));
+                if (savedMastery) {
+                    flashcards.forEach(card => {
+                        // Reset mastered status first to handle removals
+                        card.mastered = false; 
+                        if (savedMastery[card.term]) {
+                            card.mastered = true;
+                        }
+                    });
+                }
+            }
             function selectAnswer(button, selectedOption, correctAnswer) {
                 if (answerSelected) return;
                 answerSelected = true;
@@ -585,7 +727,12 @@
                 if (selectedOption === correctAnswer) {
                     quizScore++;
                     quizStreak++;
-                    showBuddyMessage("Correct!", "success");
+                    // --- UPGRADED: Streak-aware messages ---
+                    if (quizStreak > 0 && quizStreak % 3 === 0) { // Every 3 correct answers
+                        showBuddyMessage(`${quizStreak} in a row! On fire!`, "success");
+                    } else {
+                        showBuddyMessage("Correct!", "success");
+                    }
                     button.classList.remove('bg-slate-700');
                     button.classList.add('bg-green-500/50', 'border-2', 'border-green-500', 'pulse');
                 } else {
@@ -634,6 +781,15 @@
             // --- EVENT LISTENERS ---
             flashcardModeBtn.addEventListener('click', () => switchMode('flashcard'));
             quizModeBtn.addEventListener('click', () => switchMode('quiz'));
+            // Add the event listener for your new button
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                if (confirm("Are you sure you want to reset all your progress?")) {
+                    localStorage.removeItem('javaStudyHubMastery');
+                    flashcards.forEach(card => card.mastered = false);
+                    initFlashcards(); // Re-initialize the view
+                    showBuddyMessage("Progress reset!", "info");
+                }
+            });
             cardContainer.addEventListener('click', () => cardContainer.classList.toggle('flipped'));
             masteryBtn.addEventListener('click', toggleMastery);
             nextBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentFlashcardIndex < flashcards.length - 1) { currentFlashcardIndex++; updateFlashcard(); } });
@@ -647,6 +803,7 @@
                 }
             });
             restartQuizBtn.addEventListener('click', initQuiz);
+            restartMatchBtn.addEventListener('click', initMatchingGame); 
             studyBuddy.addEventListener('click', () => {
                  const messages = ["Keep going!", "You can do it!", "Java is awesome!", "Almost there!"];
                  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
@@ -666,6 +823,7 @@
             });
 
             // --- INITIAL LOAD ---
+            loadProgress();
             initFlashcards();
             setTimeout(() => {
                 showBuddyMessage("Welcome! Ready to study?", "info");
