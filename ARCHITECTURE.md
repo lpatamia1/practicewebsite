@@ -79,3 +79,26 @@ The matching game has the most complex state management.
 * **Match Evaluation (`checkForMatch`)**: This is the core check. It simply compares `firstCard.dataset.key === secondCard.dataset.key`.
     * If **true**, it calls `disableCards()`, which removes the click event listeners from the matched pair, effectively locking them in the "flipped" state.
     * If **false**, it calls `unflipCards()`, which uses a `setTimeout` to wait 1.2 seconds before flipping the cards back over. This delay is crucial for allowing the user's brain to register the mismatch.
+## Additional Concepts & Design Patterns
+
+### 5. The Study Buddy (Reactive Companion)
+
+The study buddy is more than just a static image; it's a state-driven component designed to provide feedback and personality.
+
+* **Central Controller:** The `showBuddyMessage(message, type, duration)` function is the single point of entry for all buddy interactions. It controls the speech bubble's content and visibility.
+* **State-Based Animations:** The buddy's animations are not triggered directly. Instead, the `showBuddyMessage` function adds a CSS class (`buddy-happy` or `buddy-encourage`) to the SVG element. These classes are linked to CSS `@keyframes` animations, cleanly separating the logic (what to do) from the presentation (how to do it).
+* **Self-Cleaning Timers:** Every message has a duration. The function uses `setTimeout` to automatically hide the speech bubble and remove the animation classes after a few seconds, preventing the UI from getting cluttered.
+
+### 6. Event-Driven Gamification
+
+To make the quiz feel more engaging, immediate visual feedback is provided using simple, event-driven animations.
+
+* **The `shake` and `pulse` Animations:** When an answer is selected in the quiz, the `selectAnswer` function adds either a `.pulse` class (for correct answers) or a `.shake` class (for incorrect answers) to the button that was clicked.
+* **CSS-Handled Animation:** The animations themselves are short, one-off `@keyframes` rules. They run once and then stop. This is a highly efficient way to create "fire-and-forget" UI effects without complex JavaScript timer management.
+
+### 7. Performance & Best Practices
+
+Several subtle patterns were used to ensure the application runs smoothly.
+
+* **DOM Element Caching:** At the top of the script, all necessary DOM elements are queried *once* with `document.getElementById()` and stored in `const` variables. This is far more performant than repeatedly searching the DOM for the same element inside functions that are called frequently.
+* **Event Delegation (in Matching Game):** Instead of adding a separate click listener to every one of the 16 cards in the matching game, a *single* event listener is attached to the parent `#match-grid`. When a click occurs, the `handleMatchCardClick` function uses `event.target.closest('.card-container')` to efficiently determine which card was clicked. This pattern uses significantly less memory and is a standard best practice for handling events on lists or grids of elements.
