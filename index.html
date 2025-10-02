@@ -897,7 +897,7 @@
             }
 
             function displayQuizQuestion() {
-                quizExplanationEl.classList.add('hidden'); // <-- ADD THIS LINE
+                quizExplanationEl.classList.add('hidden');
                 answerSelected = false;
                 nextQuizBtn.disabled = true;
                 const question = quizQuestions[currentQuizIndex];
@@ -1016,9 +1016,9 @@
             // --- EVENT LISTENERS ---
             flashcardModeBtn.addEventListener('click', () => switchMode('flashcard'));
             quizModeBtn.addEventListener('click', () => switchMode('quiz'));
-            matchingModeBtn.addEventListener('click', () => switchMode('matching')); // <-- ADD THIS LINE
+            matchingModeBtn.addEventListener('click', () => switchMode('matching')); 
 
-            // Add the event listener for your new button
+            // Add the event listener for new button
             document.getElementById('reset-btn').addEventListener('click', () => {
                 if (confirm("Are you sure you want to reset all your progress?")) {
                     localStorage.removeItem('javaStudyHubMastery');
@@ -1042,7 +1042,12 @@
             restartQuizBtn.addEventListener('click', initQuiz);
             restartMatchBtn.addEventListener('click', initMatchingGame); 
             studyBuddy.addEventListener('click', () => {
-                 const messages = ["Keep going!", "You can do it!", "Java is awesome!", "Almost there!", "Stay focused!", "Believe in yourself!", "Every bit of practice helps!", "You're making great progress!", "Bugs are just puzzles!", "Push that commit button!"];
+                 const messages = [
+                    "Keep going!", "You can do it!", "Java is awesome!", "Almost there!", "Stay focused!", "Believe in yourself!", 
+                    "Every bit of practice helps!", "You're making great progress!", "Bugs are just puzzles!", "Push that commit button!",
+                    "Debugging is part of the journey!", "Keep calm and code on!", "One line of code at a time!", "Every bug squashed is a step forward!",
+                    "Keep pushing your limits!", "You're doing great!", "Code, debug, repeat!", "Stay curious and keep coding!"
+                 ];
                  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
                  showBuddyMessage(randomMessage);
             });
