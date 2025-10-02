@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Java Study Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn-tailwindcss.vercel.app/"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
@@ -38,10 +38,31 @@
             justify-content: center;
             text-align: center;
             padding: 2.5rem;
-            border-radius: 1.5rem; /* 24px */
+            border-radius: 1rem; /* 16px */
+        }
+        .card-front {
+            background-color: #fdfaf2; /* Cream paper */
+            color: #333;
+            border: 1px solid #e0dccc;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+            font-family: 'Special Elite', monospace;
         }
         .card-back {
             transform: rotateY(180deg);
+            background-color: #fdfaf2;
+            color: #2c5282; /* Blue ink */
+            border: 1px solid #e0dccc;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+            font-family: 'Special Elite', monospace;
+            /* Ruled lines */
+            background-image: repeating-linear-gradient(#fdfaf2, #fdfaf2 29px, #d1e3f3 30px, #d1e3f3 31px);
+            text-align: left;
+            align-items: flex-start; /* top align */
+            justify-content: flex-start; /* left align */
+            line-height: 31px; /* Match repeating gradient */
+        }
+        #card-definition {
+             padding-top: 15px; /* Align text with first line */
         }
          /* Custom scrollbar for definition */
         .definition-scroll::-webkit-scrollbar {
@@ -175,12 +196,12 @@
             <div id="card-container" class="card-container w-full h-80 md:h-96 cursor-pointer">
                 <div id="card-inner" class="card-inner">
                     <!-- Front of Card -->
-                    <div class="card-front bg-slate-800 shadow-2xl shadow-blue-500/10 border border-slate-700">
-                        <h2 id="card-term" class="text-3xl md:text-4xl font-bold"></h2>
+                    <div class="card-front">
+                        <h2 id="card-term" class="text-3xl md:text-4xl"></h2>
                     </div>
                     <!-- Back of Card -->
-                    <div class="card-back bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl shadow-purple-500/20">
-                        <p id="card-definition" class="text-lg md:text-xl font-medium text-blue-50 max-h-full overflow-y-auto definition-scroll"></p>
+                    <div class="card-back">
+                        <p id="card-definition" class="text-lg md:text-xl max-h-full overflow-y-auto definition-scroll"></p>
                     </div>
                 </div>
             </div>
@@ -277,7 +298,57 @@
                 { term: "Constructor", definition: "A special method used to initialize objects. It is called when an object of a class is created.", mastered: false },
                 { term: "Exception", definition: "An event that occurs during the execution of a program that disrupts the normal flow of instructions.", mastered: false },
                 { term: "ArrayList", definition: "A resizable array, which can be found in the java.util package.", mastered: false },
-                { term: "Static", definition: "A keyword that indicates a member variable or method can be accessed without requiring an instantiation of the class.", mastered: false }
+                { term: "Static", definition: "A keyword that indicates a member variable or method can be accessed without requiring an instantiation of the class.", mastered: false },
+                { term: "Final", definition: "A keyword used to declare constants, prevent method overriding, and inheritance of classes.", mastered: false },
+                { term: "Lambda Expression", definition: "A short block of code which takes in parameters and returns a value. Used primarily to define inline implementations of functional interfaces.", mastered: false },
+                { term: "Stream API", definition: "A powerful feature for processing sequences of elements (like collections) in a functional style.", mastered: false },
+                { term: "Generics", definition: "A feature that allows you to define classes, interfaces, and methods with a placeholder for the type of data they operate on.", mastered: false },
+                { term: "Multithreading", definition: "A Java feature that allows concurrent execution of two or more threads for maximum utilization of CPU.", mastered: false },
+                { term: "Serialization", definition: "The process of converting an object into a byte stream, enabling it to be easily saved to a file or transmitted over a network.", mastered: false },
+                { term: "Deserialization", definition: "The reverse process of serialization, where a byte stream is converted back into a copy of the original object.", mastered: false },
+                { term: "JDBC", definition: "Java Database Connectivity. An API for connecting and executing queries with databases.", mastered: false },
+                { term: "Annotations", definition: "A form of metadata that provides data about a program but is not part of the program itself.", mastered: false },
+                { term: "Package", definition: "A namespace that organizes a set of related classes and interfaces.", mastered: false },
+                { term: "Access Modifiers", definition: "Keywords that set the accessibility of classes, methods, and other members. Examples include public, private, protected, and default.", mastered: false },
+                { term: "JIT Compiler", definition: "Just-In-Time Compiler. A component of the JVM that improves performance by compiling bytecode into native machine code at runtime.", mastered: false },
+                { term: "Immutable Object", definition: "An object whose state cannot be modified after it is created. Examples include String and wrapper classes like Integer.", mastered: false },
+                { term: "Wrapper Classes", definition: "Classes that provide a way to use primitive data types (int, boolean, etc.) as objects. Examples include Integer, Boolean, and Double.", mastered: false },
+                { term: "JavaFX", definition: "A software platform for creating and delivering desktop applications, as well as rich internet applications (RIAs) that can run across a wide variety of devices.", mastered: false },
+                { term: "Maven", definition: "A build automation tool used primarily for Java projects. It helps manage project dependencies and build lifecycle.", mastered: false },
+                { term: "Gradle", definition: "A build automation tool that is flexible and allows for custom build logic. It combines the best features of Ant and Maven.", mastered: false },
+                { term: "Dependency Injection", definition: "A design pattern used to implement IoC (Inversion of Control), allowing the creation of dependent objects outside of a class and providing those objects to a class in various ways.", mastered: false },
+                { term: "Reflection", definition: "A feature that allows inspection and modification of classes, methods, and fields at runtime.", mastered: false },
+                { term: "Java Memory Model", definition: "A specification that describes how threads in a Java program interact through memory and what behaviors are allowed in concurrent execution.", mastered: false },
+                { term: "Volatile Keyword", definition: "A keyword used in multithreading to indicate that a variable's value may be changed by different threads, ensuring visibility of changes across threads.", mastered: false },
+                { term: "Synchronized Keyword", definition: "A keyword used to control access to a method or block of code by multiple threads, ensuring that only one thread can execute the synchronized code at a time.", mastered: false },
+                { term: "Transient Keyword", definition: "A keyword used to indicate that a field should not be serialized.", mastered: false },
+                { term: "Native Method", definition: "A method that is implemented in a language other than Java, typically in C or C++, and is called from Java code using the Java Native Interface (JNI).", mastered: false },
+                { term: "JavaBeans", definition: "Reusable software components for Java that can be manipulated visually in a builder tool. They follow specific conventions, including having a no-argument constructor and getter/setter methods.", mastered: false },
+                { term: "Thread Pool", definition: "A collection of pre-instantiated reusable threads that can be used to execute tasks concurrently, improving performance by reducing the overhead of thread creation.", mastered: false },
+                { term: "Deadlock", definition: "A situation in multithreading where two or more threads are blocked forever, each waiting for the other to release a resource.", mastered: false },
+                { term: "Java Naming and Directory Interface (JNDI)", definition: "An API that provides naming and directory functionality to Java applications, allowing them to look up objects such as databases and EJBs in a directory service.", mastered: false },
+                { term: "Java Management Extensions (JMX)", definition: "A technology that provides tools for managing and monitoring applications, system objects, devices, and service-oriented networks.", mastered: false },
+                { term: "Java Native Interface (JNI)", definition: "A framework that allows Java code running in the JVM to call and be called by native applications and libraries written in other languages like C or C++.", mastered: false },
+                { term: "Java Platform Module System (JPMS)", definition: "A system introduced in Java 9 that allows developers to modularize their applications, improving maintainability and security by defining explicit dependencies between modules.", mastered: false },
+                { term: "Functional Interface", definition: "An interface that contains exactly one abstract method, making it suitable for use with lambda expressions and method references.", mastered: false },
+                { term: "Optional Class", definition: "A container object which may or may not contain a non-null value. It is used to represent optional values and avoid null pointer exceptions.", mastered: false },
+                { term: "Record Class", definition: "A special type of class introduced in Java 14 that is used to model immutable data. Records automatically generate boilerplate code like constructors, getters, equals(), hashCode(), and toString() methods.", mastered: false },
+                { term: "Switch Expression", definition: "An enhanced version of the traditional switch statement introduced in Java 12, allowing it to be used as an expression that returns a value.", mastered: false },
+                { term: "Text Blocks", definition: "A feature introduced in Java 13 that allows for multi-line string literals, improving readability and reducing the need for escape sequences.", mastered: false },
+                { term: "Sealed Classes", definition: "A feature introduced in Java 15 that allows developers to restrict which classes can extend or implement a particular class or interface, enhancing control over the class hierarchy.", mastered: false },
+                { term: "Pattern Matching for instanceof", definition: "A feature introduced in Java 16 that simplifies the common practice of casting an object after checking its type with the instanceof operator.", mastered: false },
+                { term: "Foreign Function & Memory API", definition: "An incubating feature that provides a way for Java programs to interoperate with code and data outside of the JVM, such as native libraries and memory segments.", mastered: false },
+                { term: "Project Loom", definition: "An ongoing project aimed at introducing lightweight, user-mode threads (fibers) to the Java platform, improving concurrency and scalability.", mastered: false },
+                { term: "Project Valhalla", definition: "An ongoing project focused on introducing value types to the Java language, allowing for more efficient memory usage and performance by enabling the creation of lightweight, immutable data structures.", mastered: false },
+                { term: "Project Panama", definition: "An ongoing project aimed at improving the interoperability between Java and native code, making it easier to call native libraries and work with native data structures.", mastered: false },
+                { term: "Project Amber", definition: "An ongoing project focused on exploring and incubating smaller, productivity-oriented language features to improve developer experience and code readability.", mastered: false },
+                { term: "Project Metropolis", definition: "An initiative to enhance the Java platform for building modern, cloud-native applications, focusing on performance, scalability, and ease of use.", mastered: false },
+                { term: "Project Skara", definition: "An initiative to modernize the OpenJDK project infrastructure, improving collaboration and contribution processes for the Java community.", mastered: false },
+                { term: "Project Lilliput", definition: "An experimental project exploring the possibility of reducing the memory footprint of Java applications by introducing more compact data representations and memory layouts.", mastered: false },
+                { term: "Project Leyden", definition: "An initiative to improve the startup time and memory footprint of Java applications, particularly for cloud and serverless environments.", mastered: false },
+                { term: "Project ZGC", definition: "A scalable, low-latency garbage collector designed to handle large heaps with minimal pause times, making it suitable for applications requiring high throughput and responsiveness.", mastered: false },
+                { term: "Project Shenandoah", definition: "A low-pause-time garbage collector that aims to reduce GC pause times by performing more work concurrently with the application threads.", mastered: false },
+                { term: "Project Loom", definition: "An ongoing project aimed at introducing lightweight, user-mode threads (fibers) to the Java platform, improving concurrency and scalability.", mastered: false }
             ];
 
             const quizQuestions = [
@@ -288,7 +359,30 @@
                 { question: "What concept is demonstrated by having two methods with the same name but different parameters?", code: `public int add(int a, int b) { ... }\npublic double add(double a, double b) { ... }`, options: ["Overriding", "Inheritance", "Overloading", "Encapsulation"], answer: "Overloading" },
                 { question: "Which keyword is used to create an instance of a class?", code: null, options: ["new", "create", "instance", "object"], answer: "new" },
                 { question: "An interface can contain:", code: null, options: ["Concrete methods", "Constructors", "Abstract methods only", "Instance variables"], answer: "Abstract methods only" },
-                { question: "What is the correct way to declare a constant in Java?", code: null, options: ["const int x = 5;", "int final x = 5;", "final int x = 5;", "static const x = 5;"], answer: "final int x = 5;" }
+                { question: "What is the correct way to declare a constant in Java?", code: null, options: ["const int x = 5;", "int final x = 5;", "final int x = 5;", "static const x = 5;"], answer: "final int x = 5;" },
+                { question: "What does the JVM do?", code: null, 
+                options: [
+                    "Compiles Java code into bytecode", 
+                    "Executes Java bytecode on any platform", 
+                    "Stores Java libraries", 
+                    "Manages project dependencies"
+                ], answer: "Executes Java bytecode on any platform" },
+                { question: "Which of the following is NOT a primitive data type in Java?", code: null, options: ["int", "String", "boolean", "char"], answer: "String" },
+                {question: "Which Java feature hides complex implementation and shows only the essential details?", 
+                code: null, 
+                options: ["Encapsulation", "Abstraction", "Polymorphism", "Inheritance"], 
+                answer: "Abstraction" 
+                },
+                { question: "What will be the output?", 
+                code: `int a = 10;\nint b = 20;\nSystem.out.println(a++ + ++b);`, 
+                options: ["30", "31", "32", "33"], 
+                answer: "31" 
+                },
+                { question: "What is the parent class of all Java classes?", 
+                code: null, 
+                options: ["Object", "Class", "Main", "Base"], 
+                answer: "Object" 
+                }              
             ];
 
             // --- STATE ---
@@ -356,13 +450,6 @@
                 }, duration);
             }
             
-            studyBuddy.addEventListener('click', () => {
-                 const messages = ["Keep going!", "You can do it!", "Java is awesome!", "Almost there!"];
-                 const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                 showBuddyMessage(randomMessage);
-            });
-
-
             // --- MODE SWITCHING LOGIC ---
             function switchMode(mode) {
                 if (currentMode === mode) return;
@@ -447,11 +534,6 @@
                 nextBtn.disabled = currentFlashcardIndex === flashcards.length - 1;
             }
 
-            cardContainer.addEventListener('click', () => cardContainer.classList.toggle('flipped'));
-            masteryBtn.addEventListener('click', toggleMastery);
-            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentFlashcardIndex < flashcards.length - 1) { currentFlashcardIndex++; updateFlashcard(); } });
-            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentFlashcardIndex > 0) { currentFlashcardIndex--; updateFlashcard(); } });
-
             // --- QUIZ LOGIC ---
             function initQuiz() {
                 currentQuizIndex = 0;
@@ -460,6 +542,8 @@
                 answerSelected = false;
                 quizQuestionContainer.classList.remove('hidden');
                 quizResultsContainer.classList.add('hidden');
+                nextQuizBtn.classList.remove('hidden');
+                quizProgressIndicator.classList.remove('hidden');
                 updateStreakDisplay();
                 displayQuizQuestion();
             }
@@ -526,18 +610,7 @@
             function updateQuizProgress() {
                 quizProgressIndicator.textContent = `${currentQuizIndex + 1} / ${quizQuestions.length}`;
             }
-
-            nextQuizBtn.addEventListener('click', () => {
-                currentQuizIndex++;
-                if (currentQuizIndex < quizQuestions.length) {
-                    displayQuizQuestion();
-                } else {
-                    showQuizResults();
-                }
-            });
             
-            restartQuizBtn.addEventListener('click', initQuiz);
-
             function showQuizResults() {
                 quizQuestionContainer.classList.add('hidden');
                 quizResultsContainer.classList.remove('hidden');
@@ -556,9 +629,30 @@
                     showBuddyMessage("Practice makes perfect!", "info", 4000);
                 }
                 quizFeedbackEl.textContent = feedback;
-                nextQuizBtn.classList.remove('hidden');
-                quizProgressIndicator.classList.remove('hidden');
             }
+
+            // --- EVENT LISTENERS ---
+            flashcardModeBtn.addEventListener('click', () => switchMode('flashcard'));
+            quizModeBtn.addEventListener('click', () => switchMode('quiz'));
+            cardContainer.addEventListener('click', () => cardContainer.classList.toggle('flipped'));
+            masteryBtn.addEventListener('click', toggleMastery);
+            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentFlashcardIndex < flashcards.length - 1) { currentFlashcardIndex++; updateFlashcard(); } });
+            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentFlashcardIndex > 0) { currentFlashcardIndex--; updateFlashcard(); } });
+            nextQuizBtn.addEventListener('click', () => {
+                currentQuizIndex++;
+                if (currentQuizIndex < quizQuestions.length) {
+                    displayQuizQuestion();
+                } else {
+                    showQuizResults();
+                }
+            });
+            restartQuizBtn.addEventListener('click', initQuiz);
+            studyBuddy.addEventListener('click', () => {
+                 const messages = ["Keep going!", "You can do it!", "Java is awesome!", "Almost there!"];
+                 const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                 showBuddyMessage(randomMessage);
+            });
+
 
             // --- KEYBOARD NAVIGATION ---
             document.addEventListener('keydown', (e) => {
