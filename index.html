@@ -292,7 +292,6 @@
         </svg>
     </div>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- DATA ---
@@ -396,7 +395,7 @@
             const subtitle = document.getElementById('subtitle');
             const flashcardModeBtn = document.getElementById('flashcard-mode-btn');
             const quizModeBtn = document.getElementById('quiz-mode-btn');
-            const matchingModeBtn = document.getElementById('matching-mode-btn'); // <-- ADD THIS LINE
+            const matchingModeBtn = document.getElementById('matching-mode-btn'); 
 
             const flashcardView = document.getElementById('flashcard-view');
             const cardContainer = document.getElementById('card-container');
@@ -485,19 +484,19 @@
                 if (mode === 'flashcard') {
                     flashcardView.classList.remove('hidden');
                     flashcardModeBtn.classList.add('bg-blue-700', 'text-white');
-                    subtitle.textContent = "Click the card to reveal the definition.";
+                    subtitle.textContent = "Click the card to reveal the definition. Have fun studying!";
                     stopMatchTimer(); // Stop timer if switching from matching game
                     initFlashcards();
                 } else if (mode === 'quiz') {
                     quizView.classList.remove('hidden');
                     quizModeBtn.classList.add('bg-blue-700', 'text-white');
-                    subtitle.textContent = "Test your knowledge with code examples.";
+                    subtitle.textContent = "Test your knowledge with code examples. Good luck!";
                     stopMatchTimer(); // Stop timer if switching from matching game
                     initQuiz();
                 } else if (mode === 'matching') {
                     matchingView.classList.remove('hidden');
                     matchingModeBtn.classList.add('bg-blue-700', 'text-white');
-                    subtitle.textContent = "Find the matching pairs.";
+                    subtitle.textContent = "Find the matching pairs. Click cards to flip. You can do it!";
                     initMatchingGame();
                 }
             }
@@ -620,13 +619,35 @@
                 updateFlashcardProgress();
                 updateMasteryButton();
             }
+            const masteryMessages = [
+                "Nice!",
+                "Excellent work!",
+                "Mastered!",
+                "One line of code at a time!",
+                "Every bug squashed is a step forward!",
+                "Keep pushing your limits!",
+                "You're doing great!",
+                "Code, debug, repeat!",
+                "Stay curious and keep coding!"
+            ];
             
             function toggleMastery() {
                 const card = flashcards[currentFlashcardIndex];
                 card.mastered = !card.mastered;
-                if(card.mastered){
-                    showBuddyMessage("Nice! One down.", "success");
+
+                if (card.mastered) {
+                    // 2. Get a random message from the array
+                    const randomMessage = masteryMessages[Math.floor(Math.random() * masteryMessages.length)];
+
+                    // 3. Call the function with the correct arguments
+                    //    Note: 'success' must be lowercase to trigger the animation.
+                    showBuddyMessage(randomMessage, "success");
+
+                } else {
+                    // This code runs when a card is UN-MARKED
+                    showBuddyMessage("No problem! We'll review this one again.", "info");
                 }
+
                 updateMasteryButton();
                 updateMasteryProgress();
                 saveProgress();
@@ -816,7 +837,7 @@
             restartQuizBtn.addEventListener('click', initQuiz);
             restartMatchBtn.addEventListener('click', initMatchingGame); 
             studyBuddy.addEventListener('click', () => {
-                 const messages = ["Keep going!", "You can do it!", "Java is awesome!", "Almost there!"];
+                 const messages = ["Keep going!", "You can do it!", "Java is awesome!", "Almost there!", "Stay focused!", "Believe in yourself!", "Every bit of practice helps!", "You're making great progress!", "Bugs are just puzzles!", "Push that commit button!"];
                  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
                  showBuddyMessage(randomMessage);
             });
