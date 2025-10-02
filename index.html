@@ -253,6 +253,8 @@
                      <p id="quiz-question-text" class="text-lg text-slate-300 mb-4"></p>
                      <div id="quiz-code-snippet" class="mb-4"></div>
                      <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                     <div id="quiz-explanation" class="hidden mt-4 p-4 rounded-lg bg-slate-700/50 border border-slate-600 text-slate-300 text-sm">
+                        </div>
                 </div>
                 <div id="quiz-results-container" class="hidden text-center">
                     <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Quiz Complete!</h2>
@@ -338,41 +340,237 @@
             ];
 
             const quizQuestions = [
-                { question: "What is the output of the following code?", code: `String s1 = "Hello";\nString s2 = new String("Hello");\nSystem.out.println(s1 == s2);`, options: ["true", "false", "Compilation Error", "RuntimeException"], answer: "false" },
-                { question: "Which keyword prevents a class from being subclassed (inherited from)?", code: null, options: ["static", "private", "abstract", "final"], answer: "final" },
-                { question: "What will this code print?", code: `try {\n    int x = 5 / 0;\n    System.out.print("X");\n} catch (ArithmeticException e) {\n    System.out.print("A");\n} finally {\n    System.out.print("B");\n}\nSystem.out.print("C");`, options: ["A", "B", "C", "AB", "BC", "ABC"], answer: "ABC" },
-                { question: "Which collection class does not allow duplicate elements?", code: null, options: ["ArrayList", "HashMap", "HashSet", "LinkedList"], answer: "HashSet" },
-                { question: "What concept is demonstrated by having two methods with the same name but different parameters?", code: `public int add(int a, int b) { ... }\npublic double add(double a, double b) { ... }`, options: ["Overriding", "Inheritance", "Overloading", "Encapsulation"], answer: "Overloading" },
-                { question: "Which keyword is used to create an instance of a class?", code: null, options: ["new", "create", "instance", "object"], answer: "new" },
-                { question: "What is the correct way to declare a constant in Java?", code: null, options: ["const int x = 5;", "int final x = 5;", "final int x = 5;", "static const x = 5;"], answer: "final int x = 5;" },
-                { question: "What does the JVM do?", code: null, 
+            {
+                question: "What is the output of the following code?",
+                code: `String s1 = "Hello";\nString s2 = new String("Hello");\nSystem.out.println(s1 == s2);`,
+                options: ["true", "false", "Compilation Error", "RuntimeException"],
+                correctAnswer: "false",
+                explanation: "The '==' operator checks for reference equality (if they are the same object). `s1` is in the string pool, while `new String()` creates a new object on the heap."
+            },
+            {
+                question: "Which keyword prevents a class from being subclassed (inherited from)?",
+                code: null,
+                options: ["static", "private", "abstract", "final"],
+                correctAnswer: "final",
+                explanation: "The 'final' keyword on a class prevents it from being extended."
+            },
+            {
+                question: "What will this code print?",
+                code: `try {\n    int x = 5 / 0;\n    System.out.print("X");\n} catch (ArithmeticException e) {\n    System.out.print("A");\n} finally {\n    System.out.print("B");\n}\nSystem.out.print("C");`,
+                options: ["A", "B", "C", "AB", "BC", "ABC"],
+                correctAnswer: "ABC",
+                explanation: "The `catch` block (A) executes. The `finally` block (B) always executes. Then, the code after the try-catch-finally block (C) executes."
+            },
+            {
+                question: "Which collection class does not allow duplicate elements?",
+                code: null,
+                options: ["ArrayList", "HashMap", "HashSet", "LinkedList"],
+                correctAnswer: "HashSet",
+                explanation: "HashSet implements the Set interface, which guarantees that no duplicate elements can be stored."
+            },
+            {
+                question: "What concept is demonstrated by having two methods with the same name but different parameters?",
+                code: `public int add(int a, int b) { ... }\npublic double add(double a, double b) { ... }`,
+                options: ["Overriding", "Inheritance", "Overloading", "Encapsulation"],
+                correctAnswer: "Overloading",
+                explanation: "Method Overloading allows multiple methods in the same class to have the same name, as long as their parameter lists are different."
+            },
+            {
+                question: "Which keyword is used to create an instance of a class?",
+                code: null,
+                options: ["new", "create", "instance", "object"],
+                correctAnswer: "new",
+                explanation: "The 'new' keyword is used to allocate memory for a new object and create an instance of a class."
+            },
+            {
+                question: "What is the correct way to declare a constant in Java?",
+                code: null,
+                options: ["const int x = 5;", "int final x = 5;", "final int x = 5;", "static const x = 5;"],
+                correctAnswer: "final int x = 5;",
+                explanation: "'final' is the Java keyword for declaring a variable whose value cannot be changed."
+            },
+            {
+                question: "What does the JVM do?",
+                code: null,
                 options: [
-                    "Compiles Java code into bytecode", 
-                    "Executes Java bytecode on any platform", 
-                    "Stores Java libraries", 
+                    "Compiles Java code into bytecode",
+                    "Executes Java bytecode on any platform",
+                    "Stores Java libraries",
                     "Manages project dependencies"
-                ], answer: "Executes Java bytecode on any platform" },
-                { question: "Which of the following is NOT a primitive data type in Java?", code: null, options: ["int", "String", "boolean", "char"], answer: "String" },
-                {question: "Which Java feature hides complex implementation and shows only the essential details?", 
-                code: null, 
-                options: ["Encapsulation", "Abstraction", "Polymorphism", "Inheritance"], 
-                answer: "Abstraction" 
-                },
-                { question: "Which of the following can a Java interface NOT contain?", 
-                code: null, 
-                options: ["Default methods", "Static methods", "Constructors", "Abstract methods"], 
-                answer: "Constructors" 
-                },
-                { question: "What will be the output?", 
-                code: `int a = 10;\nint b = 20;\nSystem.out.println(a++ + ++b);`, 
-                options: ["30", "31", "32", "33"], 
-                answer: "31" 
-                },
-                { question: "What is the parent class of all Java classes?", 
-                code: null, 
-                options: ["Object", "Class", "Main", "Base"], 
-                answer: "Object" 
-                }              
+                ],
+                correctAnswer: "Executes Java bytecode on any platform",
+                explanation: "The Java Virtual Machine (JVM) is responsible for interpreting compiled Java bytecode and executing it on the underlying operating system."
+            },
+            {
+                question: "Which of the following is NOT a primitive data type in Java?",
+                code: null,
+                options: ["int", "String", "boolean", "char"],
+                correctAnswer: "String",
+                explanation: "String is a class (an object) in Java, not a primitive type. The primitives are boolean, char, byte, short, int, long, float, and double."
+            },
+            {
+                question: "Which Java feature hides complex implementation and shows only the essential details?",
+                code: null,
+                options: ["Encapsulation", "Abstraction", "Polymorphism", "Inheritance"],
+                correctAnswer: "Abstraction",
+                explanation: "Abstraction focuses on hiding the internal implementation and showing only the necessary features of an object."
+            },
+            {
+                question: "Which of the following can a Java interface NOT contain?",
+                code: null,
+                options: ["Default methods", "Static methods", "Constructors", "Abstract methods"],
+                correctAnswer: "Constructors",
+                explanation: "Interfaces cannot be instantiated directly, so they cannot have constructors."
+            },
+            {
+                question: "What will be the output?",
+                code: `int a = 10;\nint b = 20;\nSystem.out.println(a++ + ++b);`,
+                options: ["30", "31", "32", "33"],
+                correctAnswer: "31",
+                explanation: "The post-increment `a++` uses the value of a (10) then increments it. The pre-increment `++b` increments b to 21 then uses it. The sum is 10 + 21 = 31."
+            },
+            {
+                question: "What is the parent class of all Java classes?",
+                code: null,
+                options: ["Object", "Class", "Main", "Base"],
+                correctAnswer: "Object",
+                explanation: "All classes in Java implicitly inherit from the Object class."
+            },
+            {
+                question: "Which of these is NOT a valid access modifier in Java?",
+                code: null,
+                options: ["public", "private", "protected", "internal"],
+                correctAnswer: "internal",
+                explanation: "Java's access modifiers are public, private, protected, and default (no keyword)."
+            },
+            {
+                question: "What does the 'static' keyword indicate?",
+                code: null,
+                options: ["The member belongs to the class, not instances", "The member cannot be overridden", "The member is private", "The member is final"],
+                correctAnswer: "The member belongs to the class, not instances",
+                explanation: "Static members are shared among all instances of a class and can be accessed using the class name itself."
+            },
+            {
+                question: "Which of the following is used to handle exceptions in Java?",
+                code: null,
+                options: ["try-catch", "if-else", "switch-case", "for-each"],
+                correctAnswer: "try-catch",
+                explanation: "The try-catch block is the standard mechanism for handling exceptions in Java."
+            },
+            {
+                question: "What is the main purpose of the 'this' keyword in Java?",
+                code: null,
+                options: ["Refer to the current object", "Refer to the parent class", "Create a new object", "Call a static method"],
+                correctAnswer: "Refer to the current object",
+                explanation: "'this' is a reference to the current instance of the class."
+            },
+            {
+                question: "Which of these is NOT a feature of Java?",
+                code: null,
+                options: ["Platform Independence", "Object-Oriented", "Manual Memory Management", "Multithreading"],
+                correctAnswer: "Manual Memory Management",
+                explanation: "Java features automatic garbage collection, which handles memory management for the developer."
+            },
+            {
+                question: "What is the output of the following code?",
+                code: `List<String> list = new ArrayList<>();\nlist.add("A");\nlist.add("B");\nlist.add("C");\nSystem.out.println(list.get(1));`,
+                options: ["A", "B", "C", "IndexOutOfBoundsException"],
+                correctAnswer: "B",
+                explanation: "ArrayLists are zero-indexed, so `get(1)` retrieves the second element in the list."
+            },
+            {
+                question: "Which of the following is a checked exception?",
+                code: null,
+                options: ["NullPointerException", "ArrayIndexOutOfBoundsException", "IOException", "ArithmeticException"],
+                correctAnswer: "IOException",
+                explanation: "Checked exceptions (like IOException) must be handled in a try-catch block or declared in the method signature. The others are unchecked (runtime) exceptions."
+            },
+            {
+                question: "What is the output of the following code?",
+                code: `String str = "Java";\nstr.concat(" Programming");\nSystem.out.println(str);`,
+                options: ["Java", "Java Programming", "Compilation Error", "RuntimeException"],
+                correctAnswer: "Java",
+                explanation: "Strings are immutable. The `concat()` method returns a new string but doesn't change the original `str` variable."
+            },
+            {
+                question: "What is the output of the following code?",
+                code: `int[] arr = {1, 2, 3};\nfor (int i : arr) {\n    if (i == 2) continue;\n    System.out.print(i);\n}`,
+                options: ["123", "13", "12", "23"],
+                correctAnswer: "13",
+                explanation: "The `continue` statement skips the rest of the loop's body for the current iteration when i is 2."
+            },
+            {
+                question: "Which of the following is NOT a valid loop in Java?",
+                code: null,
+                options: ["for", "while", "do-while", "foreach"],
+                correctAnswer: "foreach",
+                explanation: "Java uses an enhanced for-loop, often called a 'for-each' loop, but the keyword is still `for` (e.g., `for (String s : strings)`)."
+            },
+            {
+                question: "What is the output of the following code?",
+                code: `int x = 5;\nint y = 10;\nSystem.out.println(x > y ? x : y);`,
+                options: ["5", "10", "true", "false"],
+                correctAnswer: "10",
+                explanation: "This is a ternary operator. Since the condition (x > y) is false, it returns the value after the colon, which is y (10)."
+            },
+            {
+                question: "Which is the output of the following code?",
+                code: `String s = null;\nSystem.out.println(s + " is null");`,
+                options: ["null is null", " is null", "Compilation Error", "NullPointerException"],
+                correctAnswer: "null is null",
+                explanation: "When concatenating a null reference with a string, Java converts the null reference to the string \"null\"."
+            },
+            {
+                question: "What is the output of the following code?",
+                code: `int a = 10;\nint b = 20;\nSystem.out.println(a & b);`,
+                options: ["0", "10", "20", "30"],
+                correctAnswer: "0",
+                explanation: "The bitwise AND operator (&) compares bits. 10 (1010) & 20 (10100) results in 0 (00000) because no bit positions are 1 in both numbers."
+            },
+            {
+                question: "What is the output of the following code?",
+                code: `String str = "Hello";\nstr.toUpperCase();\nSystem.out.println(str);`,
+                options: ["Hello", "HELLO", "hello", "Compilation Error"],
+                correctAnswer: "Hello",
+                explanation: "Strings are immutable. `toUpperCase()` returns a new string but does not modify the original `str` variable."
+            },
+            {
+                question: "Which is the best way to reverse a String in Java?",
+                code: null,
+                options: ["Using StringBuilder's reverse() method", "Using a for loop", "Using recursion", "Using Collections.reverse()"],
+                correctAnswer: "Using StringBuilder's reverse() method",
+                explanation: "`StringBuilder` is mutable and its `reverse()` method is highly efficient and designed for this purpose."
+            },
+            {
+                question: "What is the best way to learn programming?",
+                code: null,
+                options: ["Reading books", "Watching tutorials", "Building projects", "All of the above"],
+                correctAnswer: "All of the above",
+                explanation: "A combination of theoretical learning (books, tutorials) and practical application (building projects) is the most effective way to learn."
+            },
+            {
+                question: "What is the output of the following code?",
+                code: `int[] arr = {1, 2, 3};\n System.out.println(arr.length);`,
+                options: ["2", "3", "Compilation Error", "RuntimeException"],
+                correctAnswer: "3",
+                explanation: "The `length` property of an array returns the total number of elements it contains."
+            },
+            {
+                question: "What is the output of the following code?",
+                code: `String str = "Java";\nSystem.out.println(str.charAt(2));`,
+                options: ["J", "a", "v", "Error"],
+                correctAnswer: "v",
+                explanation: "String indexing is zero-based. The character at index 0 is 'J', index 1 is 'a', and index 2 is 'v'."
+            },
+            {
+                question: "What is the output of the following code?",
+                code: `int a = 5;\nint b = 10;\nSystem.out.println(a += b);`,
+                options: ["5", "10", "15", "Compilation Error"],
+                correctAnswer: "15",
+                explanation: "The `+=` operator is a compound assignment operator. `a += b` is shorthand for `a = a + b`, which is 5 + 10 = 15."
+            }
+
+                
             ];
 
             // --- STATE ---
@@ -412,6 +610,7 @@
             const masteryProgressBar = document.getElementById('mastery-progress-bar');
             
             const quizView = document.getElementById('quiz-view');
+            const quizExplanationEl = document.getElementById('quiz-explanation'); 
             const quizQuestionText = document.getElementById('quiz-question-text');
             const quizCodeSnippet = document.getElementById('quiz-code-snippet');
             const quizOptions = document.getElementById('quiz-options');
@@ -630,7 +829,7 @@
                 "Code, debug, repeat!",
                 "Stay curious and keep coding!"
             ];
-            
+
             function toggleMastery() {
                 const card = flashcards[currentFlashcardIndex];
                 card.mastered = !card.mastered;
@@ -698,6 +897,9 @@
             }
 
             function displayQuizQuestion() {
+                quizExplanationEl.classList.add('hidden'); // <-- ADD THIS LINE
+                answerSelected = false;
+                nextQuizBtn.disabled = true;
                 answerSelected = false;
                 nextQuizBtn.disabled = true;
                 const question = quizQuestions[currentQuizIndex];
@@ -717,7 +919,7 @@
                     const button = document.createElement('button');
                     button.textContent = option;
                     button.className = 'w-full text-left p-4 rounded-lg bg-slate-700 hover:bg-slate-600/70 transition-colors duration-200';
-                    button.addEventListener('click', () => selectAnswer(button, option, question.answer));
+                    button.addEventListener('click', () => selectAnswer(button, option, question.correctAnswer));
                     quizOptions.appendChild(button);
                 });
                 updateQuizProgress();
@@ -778,6 +980,11 @@
                     });
                 }
                 updateStreakDisplay();
+                const currentQuestion = quizQuestions[currentQuizIndex];
+                if (currentQuestion.explanation) {
+                    quizExplanationEl.textContent = currentQuestion.explanation;
+                    quizExplanationEl.classList.remove('hidden');
+                }
             }
             
             function updateStreakDisplay() {
