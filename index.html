@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Study Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* -- Card flip animation -- */
+        .card-container {
+            perspective: 1000px;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+        }
+        .card-container.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2.5rem;
+            border-radius: 1.5rem; /* 24px */
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+         /* Custom scrollbar for definition */
+        .definition-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .definition-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        .definition-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        .definition-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        /* Syntax Highlighting */
+        pre code.hljs {
+            border-radius: 0.75rem;
+            padding: 1.5rem !important;
+        }
+        /* Gamification Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+        }
+        .pulse {
+            animation: pulse 0.6s ease-out;
+        }
+
+        /* Study Buddy Styles */
+        #study-buddy-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+        #study-buddy {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        #study-buddy:hover {
+            transform: scale(1.1);
+        }
+        #speech-bubble {
+            position: absolute;
+            bottom: 110px; /* Above the buddy */
+            right: 0;
+            background-color: #1e293b; /* slate-800 */
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            width: max-content;
+            max-width: 200px;
+            font-size: 14px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            visibility: hidden;
+            border: 1px solid #334155; /* slate-700 */
+        }
+        #speech-bubble.show {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+        /* Speech bubble tail */
+        #speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 30px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: #1e293b transparent transparent transparent;
+        }
+        
+        /* Buddy animations */
+        @keyframes buddy-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .buddy-happy {
+            animation: buddy-bounce 0.5s ease-in-out;
+        }
+        @keyframes buddy-encourage {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        .buddy-encourage {
+             animation: buddy-encourage 0.6s ease-in-out;
+        }
+
+    </style>
+</head>
+<body class="bg-slate-900 text-white h-full flex items-center justify-center p-4 antialiased">
+
+    <div id="app" class="w-full max-w-2xl mx-auto flex flex-col items-center gap-6">
+        
+        <!-- Header -->
+        <header class="text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                Java Study Hub
+            </h1>
+            <p id="subtitle" class="text-slate-400 mt-2">Click the card to reveal the definition.</p>
+        </header>
+
+        <!-- Mode Switcher -->
+        <div class="p-1.5 rounded-xl bg-slate-800 flex items-center gap-2">
+            <button id="flashcard-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-500 text-white transition-colors">Flashcards</button>
+            <button id="quiz-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:bg-slate-700/50 transition-colors">Quiz</button>
+        </div>
+
+        <!-- Flashcard View -->
+        <div id="flashcard-view" class="w-full">
+            <!-- Card Component -->
+            <div id="card-container" class="card-container w-full h-80 md:h-96 cursor-pointer">
+                <div id="card-inner" class="card-inner">
+                    <!-- Front of Card -->
+                    <div class="card-front bg-slate-800 shadow-2xl shadow-blue-500/10 border border-slate-700">
+                        <h2 id="card-term" class="text-3xl md:text-4xl font-bold"></h2>
+                    </div>
+                    <!-- Back of Card -->
+                    <div class="card-back bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl shadow-purple-500/20">
+                        <p id="card-definition" class="text-lg md:text-xl font-medium text-blue-50 max-h-full overflow-y-auto definition-scroll"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mastery Tracker -->
+            <div id="mastery-tracker" class="w-full mt-4 flex flex-col items-center gap-3">
+                <div class="w-full bg-slate-700 rounded-full h-2.5">
+                    <div id="mastery-progress-bar" class="bg-gradient-to-r from-green-400 to-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex items-center justify-between w-full">
+                     <p id="mastery-count" class="text-sm font-medium text-slate-400">0/15 Mastered</p>
+                     <button id="mastery-btn" class="flex items-center gap-2 text-sm font-semibold py-2 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors">
+                        <svg id="mastery-icon-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20 6 9 17l-5-5"/></svg>
+                        <svg id="mastery-icon-star" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span id="mastery-btn-text">Mark as Mastered</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Flashcard Navigation -->
+            <div class="w-full flex items-center justify-between mt-2">
+                <button id="prev-btn" class="p-4 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <p id="progress-indicator" class="text-lg font-semibold text-slate-400"></p>
+                <button id="next-btn" class="p-4 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Quiz View -->
+        <div id="quiz-view" class="w-full hidden">
+            <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-2xl shadow-purple-500/10">
+                <div id="quiz-question-container">
+                     <p id="quiz-question-text" class="text-lg text-slate-300 mb-4"></p>
+                     <div id="quiz-code-snippet" class="mb-4"></div>
+                     <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+                <div id="quiz-results-container" class="hidden text-center">
+                    <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Quiz Complete!</h2>
+                    <p id="quiz-score" class="text-4xl font-bold my-4"></p>
+                    <p id="quiz-feedback" class="text-slate-400 mb-6"></p>
+                    <button id="restart-quiz-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">Try Again</button>
+                </div>
+            </div>
+             <!-- Quiz Navigation & Progress -->
+             <div class="w-full flex items-center justify-between mt-4">
+                <div id="streak-counter" class="flex items-center gap-2 font-semibold text-orange-400">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-1.12-2.5-2.5-2.5-1.41 0-2.5 1-2.5 2.5 0 .91.5 1.7 1.25 2.13L6 17h5l-.75-2.87A2.5 2.5 0 0 0 8.5 14.5z"/><path d="M14.5 14.5a2.48 2.48 0 0 0 1.25-.37L15 17h5l-.75-2.87a2.5 2.5 0 0 0-1.75-1.75c-.91-.34-1.92.04-2.48.87A2.5 2.5 0 0 0 14.5 14.5z"/><path d="M17.5 4c0-1.1-.9-2-2-2s-2 .9-2 2c0 .75.42 1.41 1.04 1.76.62.35 1.05 1 1.05 1.74 0 1.1-.9 2-2 2s-2-.9-2-2c0-.74-.42-1.4-1.04-1.76C8.9 5.4 8.5 4.75 8.5 4c0-1.1-.9-2-2-2s-2 .9-2 2c0 .75.42 1.41 1.04 1.76.62.35 1.05 1 1.05 1.74 0 1.1-.9 2-2 2s-2-.9-2-2c0-1.1.9-2 2-2 1.1 0 2 .9 2 2 0 .74.42 1.4 1.04 1.76C9.1 6.1 9.5 6.75 9.5 7.5c0 1.1.9 2 2 2s2-.9 2-2c0-.75.42-1.41 1.04-1.76.62-.35 1.05-1 1.05-1.74 0-1.1.9-2 2-2z"/></svg>
+                     <span id="streak-count">0</span> Streak
+                </div>
+                <p id="quiz-progress-indicator" class="text-lg font-semibold text-slate-400"></p>
+                <button id="next-quiz-btn" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Study Buddy Element -->
+    <div id="study-buddy-container">
+        <div id="speech-bubble">Hello!</div>
+        <svg id="study-buddy" viewBox="0 0 100 100">
+            <!-- Monitor Body -->
+            <rect x="15" y="20" width="70" height="55" rx="8" fill="#475569"/>
+            <!-- Screen -->
+            <rect x="25" y="30" width="50" height="35" rx="4" fill="#1e293b"/>
+            <!-- Screen Glow/Face -->
+            <path d="M 35 50 C 40 55, 60 55, 65 50" stroke="#38bdf8" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="42" cy="42" r="3" fill="#38bdf8"/>
+            <circle cx="58" cy="42" r="3" fill="#38bdf8"/>
+            <!-- Stand -->
+            <rect x="40" y="75" width="20" height="10" fill="#334155"/>
+            <!-- Base -->
+            <rect x="30" y="85" width="40" height="5" rx="2" fill="#475569"/>
+        </svg>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            const flashcards = [
+                { term: "JVM", definition: "Java Virtual Machine. An abstract machine that enables a computer to run a Java program.", mastered: false },
+                { term: "JDK", definition: "Java Development Kit. A software development environment used for developing Java applications.", mastered: false },
+                { term: "JRE", definition: "Java Runtime Environment. The part of the JDK that contains the JVM, class libraries, and other files.", mastered: false },
+                { term: "Garbage Collection", definition: "The automated process of managing memory. It frees up memory that is no longer in use.", mastered: false },
+                { term: "Class", definition: "A blueprint for creating objects. It defines a set of properties and methods.", mastered: false },
+                { term: "Object", definition: "An instance of a class, consisting of data (fields) and methods.", mastered: false },
+                { term: "Encapsulation", definition: "Bundling data and methods that operate on the data into a single unit (a class).", mastered: false },
+                { term: "Inheritance", definition: "A mechanism where a new class derives properties and behaviors from an existing class.", mastered: false },
+                { term: "Polymorphism", definition: "The ability of an object to take on many forms, often through method overriding.", mastered: false },
+                { term: "Abstraction", definition: "Hiding complex implementation details and showing only essential features of an object.", mastered: false },
+                { term: "Interface", definition: "A completely 'abstract class' that is used to group related methods with empty bodies.", mastered: false },
+                { term: "Constructor", definition: "A special method used to initialize objects. It is called when an object of a class is created.", mastered: false },
+                { term: "Exception", definition: "An event that occurs during the execution of a program that disrupts the normal flow of instructions.", mastered: false },
+                { term: "ArrayList", definition: "A resizable array, which can be found in the java.util package.", mastered: false },
+                { term: "Static", definition: "A keyword that indicates a member variable or method can be accessed without requiring an instantiation of the class.", mastered: false }
+            ];
+
+            const quizQuestions = [
+                { question: "What is the output of the following code?", code: `String s1 = "Hello";\nString s2 = new String("Hello");\nSystem.out.println(s1 == s2);`, options: ["true", "false", "Compilation Error", "RuntimeException"], answer: "false" },
+                { question: "Which keyword prevents a class from being subclassed (inherited from)?", code: null, options: ["static", "private", "abstract", "final"], answer: "final" },
+                { question: "What will this code print?", code: `try {\n    int x = 5 / 0;\n    System.out.print("X");\n} catch (ArithmeticException e) {\n    System.out.print("A");\n} finally {\n    System.out.print("B");\n}\nSystem.out.print("C");`, options: ["A", "B", "C", "AB", "BC", "ABC"], answer: "ABC" },
+                { question: "Which collection class does not allow duplicate elements?", code: null, options: ["ArrayList", "HashMap", "HashSet", "LinkedList"], answer: "HashSet" },
+                { question: "What concept is demonstrated by having two methods with the same name but different parameters?", code: `public int add(int a, int b) { ... }\npublic double add(double a, double b) { ... }`, options: ["Overriding", "Inheritance", "Overloading", "Encapsulation"], answer: "Overloading" },
+                { question: "Which keyword is used to create an instance of a class?", code: null, options: ["new", "create", "instance", "object"], answer: "new" },
+                { question: "An interface can contain:", code: null, options: ["Concrete methods", "Constructors", "Abstract methods only", "Instance variables"], answer: "Abstract methods only" },
+                { question: "What is the correct way to declare a constant in Java?", code: null, options: ["const int x = 5;", "int final x = 5;", "final int x = 5;", "static const x = 5;"], answer: "final int x = 5;" }
+            ];
+
+            // --- STATE ---
+            let currentMode = 'flashcard';
+            let currentFlashcardIndex = 0;
+            let currentQuizIndex = 0;
+            let quizScore = 0;
+            let quizStreak = 0;
+            let answerSelected = false;
+            let buddyMessageTimeout;
+
+            // --- DOM ELEMENTS ---
+            const subtitle = document.getElementById('subtitle');
+            const flashcardModeBtn = document.getElementById('flashcard-mode-btn');
+            const quizModeBtn = document.getElementById('quiz-mode-btn');
+            
+            const flashcardView = document.getElementById('flashcard-view');
+            const cardContainer = document.getElementById('card-container');
+            const cardTerm = document.getElementById('card-term');
+            const cardDefinition = document.getElementById('card-definition');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progressIndicator = document.getElementById('progress-indicator');
+            const masteryBtn = document.getElementById('mastery-btn');
+            const masteryBtnText = document.getElementById('mastery-btn-text');
+            const masteryIconCheck = document.getElementById('mastery-icon-check');
+            const masteryIconStar = document.getElementById('mastery-icon-star');
+            const masteryCountEl = document.getElementById('mastery-count');
+            const masteryProgressBar = document.getElementById('mastery-progress-bar');
+            
+            const quizView = document.getElementById('quiz-view');
+            const quizQuestionText = document.getElementById('quiz-question-text');
+            const quizCodeSnippet = document.getElementById('quiz-code-snippet');
+            const quizOptions = document.getElementById('quiz-options');
+            const nextQuizBtn = document.getElementById('next-quiz-btn');
+            const quizProgressIndicator = document.getElementById('quiz-progress-indicator');
+            const quizQuestionContainer = document.getElementById('quiz-question-container');
+            const quizResultsContainer = document.getElementById('quiz-results-container');
+            const quizScoreEl = document.getElementById('quiz-score');
+            const quizFeedbackEl = document.getElementById('quiz-feedback');
+            const restartQuizBtn = document.getElementById('restart-quiz-btn');
+            const streakCountEl = document.getElementById('streak-count');
+            
+            // Study Buddy elements
+            const studyBuddy = document.getElementById('study-buddy');
+            const speechBubble = document.getElementById('speech-bubble');
+
+            // --- STUDY BUDDY LOGIC ---
+            function showBuddyMessage(message, type = 'info', duration = 3000) {
+                clearTimeout(buddyMessageTimeout);
+                speechBubble.textContent = message;
+                speechBubble.classList.add('show');
+                
+                studyBuddy.classList.remove('buddy-happy', 'buddy-encourage');
+                
+                if (type === 'success') {
+                    studyBuddy.classList.add('buddy-happy');
+                } else if (type === 'encourage') {
+                    studyBuddy.classList.add('buddy-encourage');
+                }
+
+                buddyMessageTimeout = setTimeout(() => {
+                    speechBubble.classList.remove('show');
+                    studyBuddy.classList.remove('buddy-happy', 'buddy-encourage');
+                }, duration);
+            }
+            
+            studyBuddy.addEventListener('click', () => {
+                 const messages = ["Keep going!", "You can do it!", "Java is awesome!", "Almost there!"];
+                 const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                 showBuddyMessage(randomMessage);
+            });
+
+
+            // --- MODE SWITCHING LOGIC ---
+            function switchMode(mode) {
+                if (currentMode === mode) return;
+                currentMode = mode;
+                if (mode === 'flashcard') {
+                    flashcardView.classList.remove('hidden');
+                    quizView.classList.add('hidden');
+                    flashcardModeBtn.classList.add('bg-blue-500', 'text-white');
+                    flashcardModeBtn.classList.remove('text-slate-400', 'hover:bg-slate-700/50');
+                    quizModeBtn.classList.remove('bg-blue-500', 'text-white');
+                    quizModeBtn.classList.add('text-slate-400', 'hover:bg-slate-700/50');
+                    subtitle.textContent = "Click the card to reveal the definition.";
+                    initFlashcards();
+                    showBuddyMessage("Let's review some cards!");
+                } else {
+                    flashcardView.classList.add('hidden');
+                    quizView.classList.remove('hidden');
+                    quizModeBtn.classList.add('bg-blue-500', 'text-white');
+                    quizModeBtn.classList.remove('text-slate-400', 'hover:bg-slate-700/50');
+                    flashcardModeBtn.classList.remove('bg-blue-500', 'text-white');
+                    flashcardModeBtn.classList.add('text-slate-400', 'hover:bg-slate-700/50');
+                    subtitle.textContent = "Test your knowledge with code examples.";
+                    initQuiz();
+                    showBuddyMessage("Quiz time! Good luck!");
+                }
+            }
+
+            // --- FLASHCARD LOGIC ---
+            function initFlashcards() {
+                currentFlashcardIndex = 0;
+                updateFlashcard();
+                updateMasteryProgress();
+            }
+
+            function updateFlashcard() {
+                const currentCard = flashcards[currentFlashcardIndex];
+                cardTerm.textContent = currentCard.term;
+                cardDefinition.textContent = currentCard.definition;
+                if (cardContainer.classList.contains('flipped')) {
+                    cardContainer.classList.remove('flipped');
+                }
+                updateFlashcardProgress();
+                updateMasteryButton();
+            }
+            
+            function toggleMastery() {
+                const card = flashcards[currentFlashcardIndex];
+                card.mastered = !card.mastered;
+                if(card.mastered){
+                    showBuddyMessage("Nice! One down.", "success");
+                }
+                updateMasteryButton();
+                updateMasteryProgress();
+            }
+
+            function updateMasteryButton() {
+                const card = flashcards[currentFlashcardIndex];
+                if (card.mastered) {
+                    masteryBtnText.textContent = "Mastered!";
+                    masteryBtn.classList.add('text-green-400');
+                    masteryIconCheck.classList.add('hidden');
+                    masteryIconStar.classList.remove('hidden');
+                } else {
+                    masteryBtnText.textContent = "Mark as Mastered";
+                    masteryBtn.classList.remove('text-green-400');
+                    masteryIconCheck.classList.remove('hidden');
+                    masteryIconStar.classList.add('hidden');
+                }
+            }
+            
+            function updateMasteryProgress() {
+                const masteredCount = flashcards.filter(card => card.mastered).length;
+                const totalCards = flashcards.length;
+                masteryCountEl.textContent = `${masteredCount}/${totalCards} Mastered`;
+                const percentage = (masteredCount / totalCards) * 100;
+                masteryProgressBar.style.width = `${percentage}%`;
+            }
+
+            function updateFlashcardProgress() {
+                progressIndicator.textContent = `${currentFlashcardIndex + 1} / ${flashcards.length}`;
+                prevBtn.disabled = currentFlashcardIndex === 0;
+                nextBtn.disabled = currentFlashcardIndex === flashcards.length - 1;
+            }
+
+            cardContainer.addEventListener('click', () => cardContainer.classList.toggle('flipped'));
+            masteryBtn.addEventListener('click', toggleMastery);
+            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentFlashcardIndex < flashcards.length - 1) { currentFlashcardIndex++; updateFlashcard(); } });
+            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentFlashcardIndex > 0) { currentFlashcardIndex--; updateFlashcard(); } });
+
+            // --- QUIZ LOGIC ---
+            function initQuiz() {
+                currentQuizIndex = 0;
+                quizScore = 0;
+                quizStreak = 0;
+                answerSelected = false;
+                quizQuestionContainer.classList.remove('hidden');
+                quizResultsContainer.classList.add('hidden');
+                updateStreakDisplay();
+                displayQuizQuestion();
+            }
+
+            function displayQuizQuestion() {
+                answerSelected = false;
+                nextQuizBtn.disabled = true;
+                const question = quizQuestions[currentQuizIndex];
+                quizQuestionText.textContent = question.question;
+                quizCodeSnippet.innerHTML = '';
+                if (question.code) {
+                    const pre = document.createElement('pre');
+                    const code = document.createElement('code');
+                    code.className = 'java';
+                    code.textContent = question.code;
+                    pre.appendChild(code);
+                    quizCodeSnippet.appendChild(pre);
+                    hljs.highlightElement(code);
+                }
+                quizOptions.innerHTML = '';
+                question.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.className = 'w-full text-left p-4 rounded-lg bg-slate-700 hover:bg-slate-600/70 transition-colors duration-200';
+                    button.addEventListener('click', () => selectAnswer(button, option, question.answer));
+                    quizOptions.appendChild(button);
+                });
+                updateQuizProgress();
+            }
+
+            function selectAnswer(button, selectedOption, correctAnswer) {
+                if (answerSelected) return;
+                answerSelected = true;
+                nextQuizBtn.disabled = false;
+                
+                const buttons = quizOptions.querySelectorAll('button');
+                buttons.forEach(btn => { btn.disabled = true; });
+
+                if (selectedOption === correctAnswer) {
+                    quizScore++;
+                    quizStreak++;
+                    showBuddyMessage("Correct!", "success");
+                    button.classList.remove('bg-slate-700');
+                    button.classList.add('bg-green-500/50', 'border-2', 'border-green-500', 'pulse');
+                } else {
+                    quizStreak = 0;
+                    showBuddyMessage("Not quite, but good try!", "encourage");
+                    button.classList.remove('bg-slate-700');
+                    button.classList.add('bg-red-500/50', 'border-2', 'border-red-500', 'shake');
+                    // Also highlight the correct answer
+                    buttons.forEach(btn => {
+                        if (btn.textContent === correctAnswer) {
+                            btn.classList.add('bg-green-500/50', 'border-2', 'border-green-500');
+                        }
+                    });
+                }
+                updateStreakDisplay();
+            }
+            
+            function updateStreakDisplay() {
+                streakCountEl.textContent = quizStreak;
+            }
+
+            function updateQuizProgress() {
+                quizProgressIndicator.textContent = `${currentQuizIndex + 1} / ${quizQuestions.length}`;
+            }
+
+            nextQuizBtn.addEventListener('click', () => {
+                currentQuizIndex++;
+                if (currentQuizIndex < quizQuestions.length) {
+                    displayQuizQuestion();
+                } else {
+                    showQuizResults();
+                }
+            });
+            
+            restartQuizBtn.addEventListener('click', initQuiz);
+
+            function showQuizResults() {
+                quizQuestionContainer.classList.add('hidden');
+                quizResultsContainer.classList.remove('hidden');
+                nextQuizBtn.classList.add('hidden');
+                quizProgressIndicator.classList.add('hidden');
+                quizScoreEl.textContent = `${quizScore} / ${quizQuestions.length}`;
+                let feedback = "Good effort! Keep practicing.";
+                const percentage = (quizScore / quizQuestions.length) * 100;
+                if (percentage === 100) {
+                    feedback = "Perfect score! You're a Java master!";
+                    showBuddyMessage("Amazing! Perfect score!", "success", 4000);
+                } else if (percentage >= 75) {
+                    feedback = "Excellent work! You know your stuff.";
+                     showBuddyMessage("Great job on the quiz!", "success", 4000);
+                } else {
+                    showBuddyMessage("Practice makes perfect!", "info", 4000);
+                }
+                quizFeedbackEl.textContent = feedback;
+                nextQuizBtn.classList.remove('hidden');
+                quizProgressIndicator.classList.remove('hidden');
+            }
+
+            // --- KEYBOARD NAVIGATION ---
+            document.addEventListener('keydown', (e) => {
+                if (currentMode !== 'flashcard') return;
+                if (e.key === 'ArrowRight') nextBtn.click();
+                if (e.key === 'ArrowLeft') prevBtn.click();
+                if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    cardContainer.click();
+                }
+            });
+
+            // --- INITIAL LOAD ---
+            initFlashcards();
+            setTimeout(() => {
+                showBuddyMessage("Welcome! Ready to study?", "info");
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
+
