@@ -188,7 +188,7 @@
         <div class="p-1.5 rounded-xl bg-slate-800 flex items-center gap-2">
             <button id="flashcard-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-700 text-white transition-colors">Flashcards</button>
             <button id="quiz-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:bg-slate-700/50 transition-colors">Quiz</button>
-            <button id="matching-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:bg-slate-700/50 transition-colors">Matching (Coming Soon)</button>
+            <button id="matching-mode-btn" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:bg-slate-700/50 transition-colors">Matching</button>
         </div>
 
         <!-- Matching View -->
@@ -396,7 +396,8 @@
             const subtitle = document.getElementById('subtitle');
             const flashcardModeBtn = document.getElementById('flashcard-mode-btn');
             const quizModeBtn = document.getElementById('quiz-mode-btn');
-            
+            const matchingModeBtn = document.getElementById('matching-mode-btn'); // <-- ADD THIS LINE
+
             const flashcardView = document.getElementById('flashcard-view');
             const cardContainer = document.getElementById('card-container');
             const cardTerm = document.getElementById('card-term');
@@ -465,32 +466,40 @@
             function switchMode(mode) {
                 if (currentMode === mode) return;
                 currentMode = mode;
+
+                // --- Start of update ---
+                // Hide all views first
+                flashcardView.classList.add('hidden');
+                quizView.classList.add('hidden');
+                matchingView.classList.add('hidden');
+
+                // Deactivate all buttons first
+                flashcardModeBtn.classList.remove('bg-blue-700', 'text-white');
+                quizModeBtn.classList.remove('bg-blue-700', 'text-white');
+                matchingModeBtn.classList.remove('bg-blue-700', 'text-white');
+                flashcardModeBtn.classList.add('text-slate-400', 'hover:bg-slate-700/50');
+                quizModeBtn.classList.add('text-slate-400', 'hover:bg-slate-700/50');
+                matchingModeBtn.classList.add('text-slate-400', 'hover:bg-slate-700/50');
+                // --- End of update ---
+
                 if (mode === 'flashcard') {
                     flashcardView.classList.remove('hidden');
-                    quizView.classList.add('hidden');
-                    flashcardModeBtn.classList.add('bg-blue-500', 'text-white');
-                    flashcardModeBtn.classList.remove('text-slate-400', 'hover:bg-slate-700/50');
-                    quizModeBtn.classList.remove('bg-blue-500', 'text-white');
-                    quizModeBtn.classList.add('text-slate-400', 'hover:bg-slate-700/50');
+                    flashcardModeBtn.classList.add('bg-blue-700', 'text-white');
                     subtitle.textContent = "Click the card to reveal the definition.";
+                    stopMatchTimer(); // Stop timer if switching from matching game
                     initFlashcards();
-                    showBuddyMessage("Let's review some cards!");
                 } else if (mode === 'quiz') {
-                    flashcardView.classList.add('hidden');
                     quizView.classList.remove('hidden');
-                    quizModeBtn.classList.add('bg-blue-500', 'text-white');
-                    quizModeBtn.classList.remove('text-slate-400', 'hover:bg-slate-700/50');
-                    flashcardModeBtn.classList.remove('bg-blue-500', 'text-white');
-                    flashcardModeBtn.classList.add('text-slate-400', 'hover:bg-slate-700/50');
+                    quizModeBtn.classList.add('bg-blue-700', 'text-white');
                     subtitle.textContent = "Test your knowledge with code examples.";
+                    stopMatchTimer(); // Stop timer if switching from matching game
                     initQuiz();
-                    showBuddyMessage("Quiz time! Good luck!");
                 } else if (mode === 'matching') {
-                    // Future implementation for matching mode
                     matchingView.classList.remove('hidden');
                     matchingModeBtn.classList.add('bg-blue-700', 'text-white');
                     subtitle.textContent = "Find the matching pairs.";
-                    initMatchingGame();                }
+                    initMatchingGame();
+                }
             }
             // --- MATCHING LOGIC ---
             function initMatchingGame() {
@@ -781,6 +790,8 @@
             // --- EVENT LISTENERS ---
             flashcardModeBtn.addEventListener('click', () => switchMode('flashcard'));
             quizModeBtn.addEventListener('click', () => switchMode('quiz'));
+            matchingModeBtn.addEventListener('click', () => switchMode('matching')); // <-- ADD THIS LINE
+
             // Add the event listener for your new button
             document.getElementById('reset-btn').addEventListener('click', () => {
                 if (confirm("Are you sure you want to reset all your progress?")) {
